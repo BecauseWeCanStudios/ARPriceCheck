@@ -117,7 +117,7 @@ public class CameraSourcePreview extends ViewGroup {
             marginLeft = (layoutWidth - childWidth) / 2;
         }
         for (int i = 0; i < getChildCount(); ++i)
-            getChildAt(i).layout(0, 0, childWidth + marginLeft,
+            getChildAt(i).layout(marginLeft, marginTop, childWidth + marginLeft,
                     childHeight + marginTop);
         try {
             startIfReady();
