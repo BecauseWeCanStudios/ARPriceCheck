@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         detector.setProcessor(new MultiProcessor.Builder<>(qrCodeFactory).build());
         mCameraSource = new CameraSource.Builder(context, detector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1600, 1080)
+                .setRequestedPreviewSize(1920, 1280)
                 .setRequestedFps(60.0f)
                 .setAutoFocusEnabled(true)
                 .build();
