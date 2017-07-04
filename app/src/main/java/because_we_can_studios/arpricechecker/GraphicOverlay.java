@@ -16,7 +16,6 @@ public class GraphicOverlay extends View {
     private float mWidthScaleFactor = 1.0f;
     private int mPreviewHeight;
     private float mHeightScaleFactor = 1.0f;
-    private int mFacing = CameraSource.CAMERA_FACING_BACK;
     private Set<Graphic> mGraphics = new HashSet<>();
 
     static abstract class Graphic {
@@ -37,11 +36,7 @@ public class GraphicOverlay extends View {
         }
 
         float translateX(float x) {
-            if (mOverlay.mFacing == CameraSource.CAMERA_FACING_FRONT) {
-                return mOverlay.getWidth() - scaleX(x);
-            } else {
-                return scaleX(x);
-            }
+            return scaleX(x);
         }
 
         float translateY(float y) {
@@ -78,11 +73,10 @@ public class GraphicOverlay extends View {
         postInvalidate();
     }
 
-    public void setCameraInfo(int previewWidth, int previewHeight, int facing) {
+    public void setCameraInfo(int previewWidth, int previewHeight) {
         synchronized (mLock) {
             mPreviewWidth = previewWidth;
             mPreviewHeight = previewHeight;
-            mFacing = facing;
         }
         postInvalidate();
     }

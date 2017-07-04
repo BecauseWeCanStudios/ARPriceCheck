@@ -65,7 +65,7 @@ public class CameraSourcePreview extends ViewGroup {
                 Size size = mCameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
                 int max = Math.max(size.getWidth(), size.getHeight());
-                mOverlay.setCameraInfo(min, max, mCameraSource.getCameraFacing());
+                mOverlay.setCameraInfo(min, max);
                 mOverlay.clear();
             }
             mStartRequested = false;
