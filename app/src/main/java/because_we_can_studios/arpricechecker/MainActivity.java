@@ -66,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
         detector.setProcessor(new MultiProcessor.Builder<>(qrCodeFactory).build());
         mCameraSource = new CameraSource.Builder(context, detector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1600, 1024)
-                .setRequestedFps(15.0f)
+                .setRequestedPreviewSize(1600, 1080)
+                .setRequestedFps(60.0f)
+                .setAutoFocusEnabled(true)
                 .build();
         try {
             mCameraSourcePreview.start(mCameraSource, mGraphicOverlay);
