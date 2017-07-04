@@ -8,7 +8,6 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.images.Size;
-import com.google.android.gms.vision.CameraSource;
 
 import java.io.IOException;
 
@@ -108,17 +107,12 @@ public class CameraSourcePreview extends ViewGroup {
         final int layoutHeight = bottom - top;
         int childWidth = layoutWidth;
         int childHeight = (int)(((float) layoutWidth / (float) width) * height);
-        int marginTop = (layoutHeight - childHeight) / 2;
-        int marginLeft = 0;
         if (childHeight > layoutHeight) {
             childHeight = layoutHeight;
             childWidth = (int)(((float) layoutHeight / (float) height) * width);
-            marginTop = 0;
-            marginLeft = (layoutWidth - childWidth) / 2;
         }
         for (int i = 0; i < getChildCount(); ++i)
-            getChildAt(i).layout(marginLeft, marginTop, childWidth + marginLeft,
-                    childHeight + marginTop);
+            getChildAt(i).layout(0, 0, childWidth, childHeight);
         try {
             startIfReady();
         } catch (IOException e) {
