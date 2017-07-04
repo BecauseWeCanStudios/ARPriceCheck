@@ -25,6 +25,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.StringDef;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.lang.Thread.State;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,6 +103,38 @@ public class CameraSource {
     })
     @Retention(RetentionPolicy.SOURCE)
     private @interface FocusMode {}
+
+    public static boolean cameraFocus(@NonNull CameraSource cameraSource, @FocusMode @NonNull String focusMode) {
+        Field[] declaredFields = CameraSource.class.getDeclaredFields();
+
+        for (Field field : declaredFields) {
+            if (field.getType() == Camera.class) {
+                field.setAccessible(true);
+                try {
+                    Camera camera = (Camera) field.get(cameraSource);
+                    if (camera != null) {
+                        Camera.Parameters params = camera.getParameters();
+
+                        if (!params.getSupportedFocusModes().contains(focusMode)) {
+                            return false;
+                        }
+
+                        params.setFocusMode(focusMode);
+                        camera.setParameters(params);
+                        return true;
+                    }
+
+                    return false;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                break;
+            }
+        }
+
+        return false;
+    }
 
     @StringDef({
         Camera.Parameters.FLASH_MODE_ON,

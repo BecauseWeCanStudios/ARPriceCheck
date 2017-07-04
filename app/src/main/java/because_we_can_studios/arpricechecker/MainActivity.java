@@ -20,6 +20,8 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
+import static because_we_can_studios.arpricechecker.CameraSource.cameraFocus;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         try {
             mCameraSourcePreview.start(mCameraSource, mGraphicOverlay);
+            cameraFocus(mCameraSource, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         } catch (IOException e) {
             Log.e(TAG, "Unable to start camera source.", e);
             mCameraSource.release();
