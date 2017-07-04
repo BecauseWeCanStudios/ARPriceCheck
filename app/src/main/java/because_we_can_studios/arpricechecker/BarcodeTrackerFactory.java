@@ -21,14 +21,18 @@ class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
 
     @Override
     public Tracker<Barcode> create(Barcode barcode) {
-        /* Check if barcode is correct here */
         String[] val = barcode.rawValue.split("[\\n\\r\\s]+");
         if (val.length != 2) {
             return null;
         }
-        long price = mDatabase.getPrice(Long.parseLong(val[0]));
-        BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay, price != Long.parseLong(val[1]));
-        return new BarcodeGraphicTracker(mGraphicOverlay, graphic);
+        try {
+            long price = mDatabase.getPrice(Long.parseLong(val[0]));
+            BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay, price != Long.parseLong(val[1]));
+            return new BarcodeGraphicTracker(mGraphicOverlay, graphic);
+        }
+        catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
 
