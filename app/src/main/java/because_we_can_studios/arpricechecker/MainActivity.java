@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.MultiProcessor;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
@@ -61,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
     private void buildCameraSource() {
         Log.d(TAG, "Building Camera");
         Context context = getApplicationContext();
-        BarcodeDetector detector = new BarcodeDetector.Builder(context).build();
+        BarcodeDetector detector = new BarcodeDetector.Builder(context)
+                .setBarcodeFormats(Barcode.QR_CODE)
+                .build();
         BarcodeTrackerFactory qrCodeFactory = new BarcodeTrackerFactory(mGraphicOverlay);
         detector.setProcessor(new MultiProcessor.Builder<>(qrCodeFactory).build());
         mCameraSource = new CameraSource.Builder(context, detector)
