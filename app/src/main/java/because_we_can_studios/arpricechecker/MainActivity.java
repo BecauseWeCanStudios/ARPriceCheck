@@ -65,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
         BarcodeDetector detector = new BarcodeDetector.Builder(context)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
-        BarcodeTrackerFactory qrCodeFactory = new BarcodeTrackerFactory(mGraphicOverlay);
+        PriceDatabase database = new PriceDatabase("Server address should go here");
+        BarcodeTrackerFactory qrCodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, database);
         detector.setProcessor(new MultiProcessor.Builder<>(qrCodeFactory).build());
         mCameraSource = new CameraSource.Builder(context, detector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
