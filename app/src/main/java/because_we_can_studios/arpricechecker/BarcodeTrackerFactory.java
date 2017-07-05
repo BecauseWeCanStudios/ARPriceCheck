@@ -103,12 +103,12 @@ class BarcodeGraphicTracker extends Tracker<Barcode> {
     }
 
     @Override
-    public void onMissing(Detector.Detections<Barcode> detectionResults) {
-        mOverlay.remove(mGraphic);
-    }
-
-    @Override
     public void onDone() {
+        try {
+            Thread.sleep(100);
+        } catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
         mOverlay.remove(mGraphic);
     }
 
