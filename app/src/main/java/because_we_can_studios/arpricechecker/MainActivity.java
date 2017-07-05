@@ -23,14 +23,15 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
     private boolean isFlashEnabled = false;
     private boolean isFlashAvailable = false;
-    private boolean isCameraAvailable = false;
     private boolean isBlocked = false;
-
     private Handler mHandler = new Handler();
+
+    private boolean isCameraAvailable = false;
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mCameraSourcePreview;
     private GraphicOverlay mGraphicOverlay;
