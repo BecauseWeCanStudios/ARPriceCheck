@@ -84,7 +84,11 @@ public class MainActivity extends AppCompatActivity {
                     .build();
             PriceDatabase database = new PriceDatabase("Server address should go here");
             BarcodeTrackerFactory qrCodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, database);
-            detector.setProcessor(new MultiProcessor.Builder<>(qrCodeFactory).build());
+            detector.setProcessor(
+                    new MultiProcessor.Builder<>(qrCodeFactory)
+                            .setMaxGapFrames(15)
+                            .build()
+            );
             mCameraSource = new CameraSource.Builder(context, detector)
                     .setFacing(CameraSource.CAMERA_FACING_BACK)
                     .setRequestedPreviewSize(1920, 1080)
