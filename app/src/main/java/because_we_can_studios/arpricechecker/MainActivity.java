@@ -14,13 +14,12 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
-
-import static because_we_can_studios.arpricechecker.CameraSource.cameraFocus;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -83,11 +82,10 @@ public class MainActivity extends AppCompatActivity {
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(1920, 1080)
                 .setRequestedFps(60.0f)
-                .setFlashMode(isTorchOn ? Camera.Parameters.FLASH_MODE_TORCH : null)
+                .setAutoFocusEnabled(true)
                 .build();
         try {
             mCameraSourcePreview.start(mCameraSource, mGraphicOverlay);
-            cameraFocus(mCameraSource, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         } catch (IOException e) {
             Log.e(TAG, "Unable to start camera source.", e);
             mCameraSource.release();
@@ -137,7 +135,14 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Your device doesn't support flashlight ( ͡° ͜ʖ ͡°)",Toast.LENGTH_SHORT).show();
                         }
                         isTorchOn = !isTorchOn;
-                        mCameraSource.setFlashMode(isTorchOn ? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_OFF);
+                        Camera camera = mCameraSourcePreview.getCamera();
+                        if (camera != null) {
+                            Camera.Parameters parameters = camera.getParameters();
+                            parameters.setFlashMode(isTorchOn ?
+                                    Camera.Parameters.FLASH_MODE_TORCH :
+                                    Camera.Parameters.FLASH_MODE_OFF);
+                            camera.setParameters(parameters);
+                        }
                         isBlocked = false;
                     }
                 }, 100);

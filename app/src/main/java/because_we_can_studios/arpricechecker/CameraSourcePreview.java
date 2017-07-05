@@ -9,10 +9,10 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.images.Size;
+import com.google.android.gms.vision.CameraSource;
 
 import java.io.IOException;
-
-import static because_we_can_studios.arpricechecker.CameraSource.cameraFocus;
+import java.lang.reflect.Field;
 
 public class CameraSourcePreview extends ViewGroup {
     private static final String TAG = "CameraSourcePreview";
@@ -20,6 +20,9 @@ public class CameraSourcePreview extends ViewGroup {
     private SurfaceView mSurfaceView;
     private boolean mStartRequested;
     private boolean mSurfaceAvailable;
+
+    /* Camera used in CameraSource */
+    private Camera mCamera;
     private CameraSource mCameraSource;
 
     private GraphicOverlay mOverlay;
@@ -63,7 +66,7 @@ public class CameraSourcePreview extends ViewGroup {
     private void startIfReady() throws IOException {
         if (mStartRequested && mSurfaceAvailable) {
             mCameraSource.start(mSurfaceView.getHolder());
-            cameraFocus(mCameraSource, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            findCameraInCameraSource();
             if (mOverlay != null) {
                 Size size = mCameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
@@ -122,6 +125,27 @@ public class CameraSourcePreview extends ViewGroup {
         } catch (IOException e) {
             Log.e(TAG, "Could not start camera source.", e);
         }
+    }
+
+    private void findCameraInCameraSource() {
+        if (mCameraSource != null) {
+            Field[] fields = mCameraSource.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.getType() == Camera.class) {
+                    field.setAccessible(true);
+                    try {
+                        mCamera = (Camera) field.get(mCameraSource);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public Camera getCamera() {
+        return mCamera;
     }
 }
 
