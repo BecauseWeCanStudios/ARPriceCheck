@@ -1,1 +1,1 @@
-# ARPriceCheck
+# ARPriceChecker
