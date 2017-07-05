@@ -27,9 +27,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
     private boolean isTorchOn = false;
+    private boolean isFlashAvailable = false;
     private boolean isBlocked = false;
     private Handler mHandler = new Handler();
 
+    private boolean isCameraAvailable = false;
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mCameraSourcePreview;
     private GraphicOverlay mGraphicOverlay;
@@ -40,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mCameraSourcePreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        isCameraAvailable = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        if (!isCameraAvailable) showMessage("You device doesn't have camera");
+        isFlashAvailable = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Permission is already granted");
@@ -70,26 +76,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildCameraSource() {
-        Log.d(TAG, "Building Camera");
-        Context context = getApplicationContext();
-        BarcodeDetector detector = new BarcodeDetector.Builder(context)
-                .setBarcodeFormats(Barcode.QR_CODE)
-                .build();
-        PriceDatabase database = new PriceDatabase("Server address should go here");
-        BarcodeTrackerFactory qrCodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, database);
-        detector.setProcessor(new MultiProcessor.Builder<>(qrCodeFactory).build());
-        mCameraSource = new CameraSource.Builder(context, detector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(1920, 1080)
-                .setRequestedFps(60.0f)
-                .setAutoFocusEnabled(true)
-                .build();
-        try {
-            mCameraSourcePreview.start(mCameraSource, mGraphicOverlay);
-        } catch (IOException e) {
-            Log.e(TAG, "Unable to start camera source.", e);
-            mCameraSource.release();
-            mCameraSource = null;
+        if (isCameraAvailable) {
+            Log.d(TAG, "Building Camera");
+            Context context = getApplicationContext();
+            BarcodeDetector detector = new BarcodeDetector.Builder(context)
+                    .setBarcodeFormats(Barcode.QR_CODE)
+                    .build();
+            PriceDatabase database = new PriceDatabase("Server address should go here");
+            BarcodeTrackerFactory qrCodeFactory = new BarcodeTrackerFactory(mGraphicOverlay, database);
+            detector.setProcessor(new MultiProcessor.Builder<>(qrCodeFactory).build());
+            mCameraSource = new CameraSource.Builder(context, detector)
+                    .setFacing(CameraSource.CAMERA_FACING_BACK)
+                    .setRequestedPreviewSize(1920, 1080)
+                    .setRequestedFps(60.0f)
+                    .setAutoFocusEnabled(true)
+                    .build();
         }
     }
 
@@ -129,19 +130,18 @@ public class MainActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Boolean isFlashAvailable = getApplicationContext().getPackageManager()
-                                .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
-                        if (!isFlashAvailable) {
-                            Toast.makeText(MainActivity.this, "Your device doesn't support flashlight ( ͡° ͜ʖ ͡°)",Toast.LENGTH_SHORT).show();
-                        }
-                        isTorchOn = !isTorchOn;
-                        Camera camera = mCameraSourcePreview.getCamera();
-                        if (camera != null) {
-                            Camera.Parameters parameters = camera.getParameters();
-                            parameters.setFlashMode(isTorchOn ?
-                                    Camera.Parameters.FLASH_MODE_TORCH :
-                                    Camera.Parameters.FLASH_MODE_OFF);
-                            camera.setParameters(parameters);
+                        if (isFlashAvailable) {
+                            isTorchOn = !isTorchOn;
+                            Camera camera = mCameraSourcePreview.getCamera();
+                            if (camera != null) {
+                                Camera.Parameters parameters = camera.getParameters();
+                                parameters.setFlashMode(isTorchOn ?
+                                        Camera.Parameters.FLASH_MODE_TORCH :
+                                        Camera.Parameters.FLASH_MODE_OFF);
+                                camera.setParameters(parameters);
+                            }
+                        } else {
+                            showMessage("You device doesn't support flashlight");
                         }
                         isBlocked = false;
                     }
@@ -151,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.onTouchEvent(e);
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 }
