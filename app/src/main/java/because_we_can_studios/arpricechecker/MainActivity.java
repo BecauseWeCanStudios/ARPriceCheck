@@ -23,15 +23,14 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
-    private boolean isTorchOn = false;
+    private boolean isFlashEnabled = false;
     private boolean isFlashAvailable = false;
-    private boolean isBlocked = false;
-    private Handler mHandler = new Handler();
-
     private boolean isCameraAvailable = false;
+    private boolean isBlocked = false;
+
+    private Handler mHandler = new Handler();
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mCameraSourcePreview;
     private GraphicOverlay mGraphicOverlay;
@@ -131,17 +130,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (isFlashAvailable) {
-                            isTorchOn = !isTorchOn;
+                            isFlashEnabled ^= true;
                             Camera camera = mCameraSourcePreview.getCamera();
                             if (camera != null) {
                                 Camera.Parameters parameters = camera.getParameters();
-                                parameters.setFlashMode(isTorchOn ?
+                                parameters.setFlashMode(isFlashEnabled ?
                                         Camera.Parameters.FLASH_MODE_TORCH :
                                         Camera.Parameters.FLASH_MODE_OFF);
                                 camera.setParameters(parameters);
                             }
                         } else {
-                            showMessage("You device doesn't support flashlight");
+                            showMessage("Your device doesn't support flashlight");
                         }
                         isBlocked = false;
                     }
