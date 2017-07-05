@@ -104,12 +104,16 @@ class BarcodeGraphicTracker extends Tracker<Barcode> {
 
     @Override
     public void onDone() {
-        try {
-            Thread.sleep(100);
-        } catch(InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
-        mOverlay.remove(mGraphic);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(100);
+                } catch(InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                mOverlay.remove(mGraphic);
+            }
+        }).start();
     }
 
 }
