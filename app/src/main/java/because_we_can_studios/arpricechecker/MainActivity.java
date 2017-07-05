@@ -131,14 +131,14 @@ public class MainActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        blocked = false;
                         Boolean isFlashAvailable = getApplicationContext().getPackageManager()
                                 .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
                         if (!isFlashAvailable) {
                             Toast.makeText(MainActivity.this, "Your device doesn't support flashlight ( ͡° ͜ʖ ͡°)",Toast.LENGTH_SHORT).show();
                         }
-                        isTorchOn = isTorchOn ? false : true;
+                        isTorchOn = !isTorchOn;
                         mCameraSource.setFlashMode(isTorchOn ? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_OFF);
+                        blocked = false;
                     }
                 }, 100);
             } else {
