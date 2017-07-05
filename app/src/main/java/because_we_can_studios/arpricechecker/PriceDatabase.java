@@ -18,14 +18,14 @@ public class PriceDatabase {
         }
     }
 
-    public long getPrice(long id) {
+    public Long getPrice(long id) {
         Long price = localCache.get(id);
         if (price != null) {
             return price;
         }
         else {
             // Ask database, probably
-            return 0;
+            return null;
         }
     }
 

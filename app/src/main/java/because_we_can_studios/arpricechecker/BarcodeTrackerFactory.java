@@ -26,11 +26,14 @@ class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
             return null;
         }
         try {
-            long price = mDatabase.getPrice(Long.parseLong(val[0]));
+            Long price = mDatabase.getPrice(Long.parseLong(val[0]));
             BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay, price != Long.parseLong(val[1]));
             return new BarcodeGraphicTracker(mGraphicOverlay, graphic);
         }
         catch (NumberFormatException e) {
+            return null;
+        }
+        catch (NullPointerException e) {
             return null;
         }
     }
