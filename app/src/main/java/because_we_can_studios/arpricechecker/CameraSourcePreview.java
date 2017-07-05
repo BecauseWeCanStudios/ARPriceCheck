@@ -1,6 +1,7 @@
 package because_we_can_studios.arpricechecker;
 
 import android.content.Context;
+import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -8,9 +9,10 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.images.Size;
-import com.google.android.gms.vision.CameraSource;
 
 import java.io.IOException;
+
+import static because_we_can_studios.arpricechecker.CameraSource.cameraFocus;
 
 public class CameraSourcePreview extends ViewGroup {
     private static final String TAG = "CameraSourcePreview";
@@ -61,6 +63,7 @@ public class CameraSourcePreview extends ViewGroup {
     private void startIfReady() throws IOException {
         if (mStartRequested && mSurfaceAvailable) {
             mCameraSource.start(mSurfaceView.getHolder());
+            cameraFocus(mCameraSource, Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             if (mOverlay != null) {
                 Size size = mCameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
@@ -108,17 +111,12 @@ public class CameraSourcePreview extends ViewGroup {
         final int layoutHeight = bottom - top;
         int childWidth = layoutWidth;
         int childHeight = (int)(((float) layoutWidth / (float) width) * height);
-        int marginTop = (layoutHeight - childHeight) / 2;
-        int marginLeft = 0;
         if (childHeight > layoutHeight) {
             childHeight = layoutHeight;
             childWidth = (int)(((float) layoutHeight / (float) height) * width);
-            marginTop = 0;
-            marginLeft = (layoutWidth - childWidth) / 2;
         }
         for (int i = 0; i < getChildCount(); ++i)
-            getChildAt(i).layout(marginLeft, marginTop, childWidth + marginLeft,
-                    childHeight + marginTop);
+            getChildAt(i).layout(0, 0, childWidth, childHeight);
         try {
             startIfReady();
         } catch (IOException e) {
