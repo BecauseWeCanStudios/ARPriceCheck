@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
     private boolean isTorchOn = false;
-    private boolean blocked = false;
-    private Handler handler = new Handler();
+    private boolean isBlocked = false;
+    private Handler mHandler = new Handler();
 
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mCameraSourcePreview;
@@ -126,9 +126,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
-            if (!blocked) {
-                blocked = true;
-                handler.postDelayed(new Runnable() {
+            if (!isBlocked) {
+                isBlocked = true;
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Boolean isFlashAvailable = getApplicationContext().getPackageManager()
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         isTorchOn = !isTorchOn;
                         mCameraSource.setFlashMode(isTorchOn ? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_OFF);
-                        blocked = false;
+                        isBlocked = false;
                     }
                 }, 100);
             } else {
