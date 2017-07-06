@@ -3,6 +3,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "26.0.0"
+    sourceSets.main {
+        jni.srcDirs = []
+        jniLibs.srcDir "libs/"
+    }
     defaultConfig {
         applicationId "because_we_can_studios.arpricechecker"
         minSdkVersion 21
@@ -14,6 +18,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            ndk {
+                abiFilters "armeabi-v7a"
+            }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -29,5 +36,7 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.android.gms:play-services-vision:11.0.2'
+    compile 'com.google.zxing:core:3.3.0'
     testCompile 'junit:junit:4.12'
+    compile files('libs/Vuforia.jar')
 }

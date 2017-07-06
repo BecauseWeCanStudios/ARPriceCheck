@@ -18,6 +18,7 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.vuforia.Vuforia;
 
 import java.io.IOException;
 
@@ -57,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
                     RC_HANDLE_CAMERA_PERM);
         }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        Vuforia.setInitParameters(this, Vuforia.GL_30, "AfhTRfb/////AAAAGY1DA8J1GExav7AgJz0lUNknsdrIGdA2+GEa0c+QXpEIyhh9kreHv/jPdKvGzuIk/GWPYTXt1WaXUWhQN9E9AUUNJz1Dy4RnmgEgPSji0Nf76YJTA228oVozzBibZ69fXXLXjSC51Wwe74Qc6ogczq8cf9qH6HHz4AIWRqNWwexKg8G8JWDR0d23S0hEPSHPdEVLTM6V1NclxvrrVFNTNGvWAYCGDye9UozbIlQlmtxnlNTfypI1oYmhiFlr8Z+TUPSX7h4IXb8BUj59mNljv/VQMN6yAq3dZ+hA+pmPaDXPYEocsTdtm22Vfy0l01wr1l8WpLNUK1ZzIFDeKyXCswivUkhscmuowYoSV7/qY+uo");
+        int progressValue = 0;
+        do {
+            progressValue = Vuforia.init();
+        } while (progressValue >= 0 && progressValue < 100);
     }
 
     @Override
