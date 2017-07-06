@@ -1,5 +1,6 @@
 package because_we_can_studios.arpricechecker;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +10,12 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
+
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.qrcode.encoder.Encoder;
+import com.google.zxing.qrcode.encoder.QRCode;
+
+import java.lang.Exception;
 
 class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
     private GraphicOverlay mGraphicOverlay;
@@ -21,19 +28,21 @@ class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
 
     @Override
     public Tracker<Barcode> create(Barcode barcode) {
-        String[] val = barcode.rawValue.split("[\\n\\r\\s]+");
+        String string = barcode.rawValue;
+        String[] val = string.split("[\\n\\r\\s]+");
         if (val.length != 2) {
             return null;
         }
         try {
             Long price = mDatabase.getPrice(Long.parseLong(val[0]));
-            BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay, price != Long.parseLong(val[1]));
+            Encoder.chooseMode(string);
+            QRCode qrcode = Encoder.encode(string, ErrorCorrectionLevel.L);
+            Bitmap bitmap = Utils.BitmapFromByteMatrix(qrcode.getMatrix());
+            BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay,
+                    price != Long.parseLong(val[1]));
             return new BarcodeGraphicTracker(mGraphicOverlay, graphic);
         }
-        catch (NumberFormatException e) {
-            return null;
-        }
-        catch (NullPointerException e) {
+        catch (Exception e) {
             return null;
         }
     }
